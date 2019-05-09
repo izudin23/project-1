@@ -8,20 +8,24 @@
                 <div class="card-header">Companies</div>
 
                 <div class="card-body">
-                    <div class="card mb-3" style="max-width: 540px;">
+                    <div class="card mb-3">
                         <div class="row no-gutters">
+
+                            @if($company->logo)
                             <div class="col-md-4">
-                                <img src="https://via.placeholder.com/200" class="card-img" alt="...">
+                                <img src="{{asset('storage/'.$company->logo)}}" class="card-img" alt="...">
                             </div>
+                            @endif
                             <div class="col-md-8">
                                 <div class="card-body">
-                                    <h5 class="card-title">Card title</h5>
-                                    <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                                    <h5 class="card-title">Name : {{$company->name}}</h5>
+                                    <p class="card-text">Email : {{$company->email}}</p>
+                                    <p class="card-text"><small class="text-muted">website : {{$company->website}}</small></p>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <a href="{{route('companies.edit',['company'=>$company])}}" class="btn btn-warning">Edit Company </a>
                 </div>
             </div>
         </div>

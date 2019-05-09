@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class CompanyController extends Controller
 {
@@ -15,6 +16,7 @@ class CompanyController extends Controller
     public function index()
     {
         $companies = Company::all();
+
         return view('company.index', compact('companies'));
     }
 
@@ -26,7 +28,8 @@ class CompanyController extends Controller
     public function create()
     {
         //
-        return view('company.create');
+        $company = new Company();
+        return view('company.create', compact('company'));
     }
 
     /**
@@ -38,6 +41,7 @@ class CompanyController extends Controller
     public function store()
     {
         $company = Company::create($this->validateRequest());
+        // store logo
         $this->storeLogo($company);
         return redirect('companies')->with('message', 'Company has Added');
     }
@@ -50,7 +54,7 @@ class CompanyController extends Controller
      */
     public function show(Company $company)
     {
-        //
+        return view('company.show', compact('company'));
     }
 
     /**
@@ -61,7 +65,8 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+
+        return view('company.edit', compact('company'));
     }
 
     /**
@@ -71,9 +76,12 @@ class CompanyController extends Controller
      * @param  \App\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(Company $company)
     {
-        //
+        $company->update($this->validateRequest());
+        // store logo
+        $this->storeLogo($company);
+        return redirect('companies/' . $company->id)->with('message', 'Details has Edited');
     }
 
     /**
@@ -84,7 +92,10 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        $company->delete();
+        // delete logo
+        File::delete(public_path('storage/' . $company->logo));
+        return redirect('companies')->with('message', 'Details has Deleted');
     }
 
     private function validateRequest()
@@ -101,7 +112,8 @@ class CompanyController extends Controller
     {
         if (request()->has('logo')) {
             $company->update([
-                'logo' => request()->logo->store('uploads', 'public')
+                // store('uploads', 'public') = path folder upload
+                'logo' => request()->logo->store('logo', 'public')
             ]);
         }
     }

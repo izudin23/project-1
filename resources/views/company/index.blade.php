@@ -26,8 +26,14 @@
                             <td>{{$company->email}}</td>
                             <td>{{$company->website}}</td>
                             <td>
-                                <a href="" class="btn btn-warning btn-sm m-1">Edit</a>
-                                <a href="" class="btn btn-danger btn-sm">Delete</a>
+                                <a href="{{route('companies.show',['company'=>$company]) }}" class="btn btn-warning btn-sm m-1">Edit</a>
+                                <!-- delete data -->
+                                <form action="{{route('companies.destroy',['company'=>$company]) }}" method="POST">
+                                    @method('DELETE')
+                                    @csrf
+                                    <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete this item?');">Delete</button>
+                                </form>
+                                <!-- delete data -->
                             </td>
                         </tr>
                         @endforeach

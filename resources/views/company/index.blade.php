@@ -26,7 +26,8 @@
                             <td>{{$company->email}}</td>
                             <td>{{$company->website}}</td>
                             <td>
-                                <a href="{{route('companies.show',['company'=>$company]) }}" class="btn btn-warning btn-sm m-1">Edit</a>
+                                <a href="{{route('companies.show',['company'=>$company]) }}" class="btn btn-info btn-sm m-1">Details</a>
+                                <a href="{{route('companies.edit',['company'=>$company]) }}" class="btn btn-warning btn-sm m-1">Edit</a>
                                 <!-- delete data -->
                                 <form action="{{route('companies.destroy',['company'=>$company]) }}" method="POST">
                                     @method('DELETE')
@@ -39,6 +40,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{ $companies->links() }}
             </div>
         </div>
     </div>

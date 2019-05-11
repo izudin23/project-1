@@ -3,10 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Employee;
+use App\Company;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
 {
+    public function __construct()
+    {
+        // ->except(['index']) can view index but cannot edit delete add
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -14,7 +21,8 @@ class EmployeeController extends Controller
      */
     public function index()
     {
-        return view('employee.index');
+        $employees = Employee::with('company')->paginate(10);
+        return view('employee.index', compact('employees'));
     }
 
     /**
@@ -24,7 +32,9 @@ class EmployeeController extends Controller
      */
     public function create()
     {
-        //
+        $companies  = Company::all();
+        $employee = new Employee();
+        return view('employee.create', compact('companies', 'employee'));
     }
 
     /**
@@ -36,6 +46,10 @@ class EmployeeController extends Controller
     public function store(Request $request)
     {
         //
+        Employee::create($this->validateRequest());
+        // dd($c);
+
+        return redirect('employees')->with('message', 'Employee Has Added');
     }
 
     /**
@@ -46,7 +60,7 @@ class EmployeeController extends Controller
      */
     public function show(Employee $employee)
     {
-        //
+        return view('employee.show', compact('employee'));
     }
 
     /**
@@ -57,7 +71,8 @@ class EmployeeController extends Controller
      */
     public function edit(Employee $employee)
     {
-        //
+        $companies = Company::all();
+        return view('employee.edit', compact('employee', 'companies'));
     }
 
     /**
@@ -69,7 +84,8 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, Employee $employee)
     {
-        //
+        $employee->update($this->validateRequest());
+        return redirect('employees')->with('message', 'Details has Edited');
     }
 
     /**
@@ -80,6 +96,17 @@ class EmployeeController extends Controller
      */
     public function destroy(Employee $employee)
     {
-        //
+        $employee->delete();
+        return redirect('employees')->with('message', 'Details has Deleted');
+    }
+
+    private function validateRequest()
+    {
+        return request()->validate([
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'company_id' => 'required',
+        ]);
     }
 }

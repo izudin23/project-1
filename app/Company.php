@@ -8,4 +8,10 @@ class Company extends Model
 {
     //
     protected $guarded = [];
+
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
+    }
 }

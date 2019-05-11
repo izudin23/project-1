@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Intervention\Image\Facades\Image;
 
 class CompanyController extends Controller
 {
+    public function __construct()
+    {
+        // ->except(['index']) can view index but cannot edit delete add
+        $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +22,7 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        $companies = Company::all();
+        $companies = Company::paginate(5);
 
         return view('company.index', compact('companies'));
     }
@@ -115,6 +122,10 @@ class CompanyController extends Controller
                 // store('uploads', 'public') = path folder upload
                 'logo' => request()->logo->store('logo', 'public')
             ]);
+
+            // sizing image
+            $logo = Image::make(public_path('storage/' . $company->logo))->fit(200, 200);
+            $logo->save();
         }
     }
 }
